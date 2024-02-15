@@ -1,0 +1,25 @@
+<?php
+require __DIR__ . '/../dbconnect.php';
+
+session_start();
+
+if (!isset($_SESSION['id'])) {
+    header('Location: /auth/login.php');
+    exit;
+}
+
+
+if (!isset($_POST['id'])) {
+    header('HTTP/1.1 400 Bad Request');
+    echo 'Bad Request: delete-id is missing';
+    exit;
+  }
+
+try {
+    $stmt = $dbh->prepare("DELETE FROM todos WHERE id = :id");
+    $stmt->bindValue(':id', $_POST['id']);
+    $stmt->execute();
+} catch  (PDOException $e) {
+    header('HTTP/1.1 500 Internal Server Error');
+    exit;
+  }
